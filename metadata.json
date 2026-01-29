@@ -1,0 +1,8 @@
+{
+  "name": "AI Toolbox",
+  "description": "AI Toolbox UX design",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
