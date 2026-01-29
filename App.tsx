@@ -8,6 +8,7 @@ import { ActionBar } from './components/ActionBar';
 import { MediaAlignmentList } from './components/MediaAlignmentList';
 import { BookInfoModal } from './components/BookInfoModal';
 import { LandingPage } from './components/LandingPage';
+import { StickerLibraryModal } from './components/StickerLibraryModal';
 import { VisualMode, ScriptSentence, BookData, AppView } from './types';
 
 const DEMO_BOOK_DATA: BookData = {
@@ -42,6 +43,8 @@ const App: React.FC = () => {
   const [script, setScript] = useState<ScriptSentence[]>(INITIAL_SCRIPT);
   const [visualMode, setVisualMode] = useState<VisualMode>(VisualMode.SELECTION);
   const [isBookModalOpen, setIsBookModalOpen] = useState(false);
+  const [isStickerModalOpen, setIsStickerModalOpen] = useState(false);
+  const [selectedSticker, setSelectedSticker] = useState<{id: string, name: string, url: string} | null>(null);
 
   const hasBookInfo = bookData.title.trim() !== '';
 
@@ -51,6 +54,15 @@ const App: React.FC = () => {
 
   const handleClearData = () => {
     setBookData(EMPTY_BOOK_DATA);
+  };
+
+  const handleAiSmartSelect = () => {
+    const aiSticker = { 
+      id: 'AI-1', 
+      name: 'AI 智能推荐贴片', 
+      url: 'https://api.dicebear.com/7.x/shapes/svg?seed=ai-smart' 
+    };
+    setSelectedSticker(aiSticker);
   };
 
   const renderSmartVideoTool = () => (
@@ -67,7 +79,6 @@ const App: React.FC = () => {
             </div>
             
             <div className="flex gap-3 pt-1">
-              {/* 演示填入/清除按钮 (弱化样式) */}
               {!hasBookInfo ? (
                 <button 
                   onClick={handleQuickFill}
@@ -159,6 +170,78 @@ const App: React.FC = () => {
         </section>
 
         <section>
+          <div className="mb-8 flex items-end justify-between">
+            <h2 className="text-2xl font-bold text-slate-900 tracking-tight">画面贴片</h2>
+            <div className="flex items-center gap-2 pb-0.5">
+              <button 
+                onClick={handleAiSmartSelect}
+                className="flex items-center gap-2 px-4 py-2 bg-[#3B5BFF]/5 text-[#3B5BFF] border border-[#3B5BFF]/20 rounded-xl text-sm font-bold hover:bg-[#3B5BFF]/10 transition-all active:scale-95"
+              >
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M11.3 1.047a1 1 0 00-1.6 0l-8.6 10.1A1 1 0 001.9 12.8h6.2L6.8 18.9a1 1 0 001.6 0l8.6-10.1a1 1 0 00-1.3-1.65l-6.2 1.3L11.3 1.047z" clipRule="evenodd" />
+                </svg>
+                AI 智选贴片
+              </button>
+              
+              <div className="relative group">
+                <div className="p-1 cursor-help text-slate-400 hover:text-slate-600 transition-colors">
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                {/* Tooltip */}
+                <div className="absolute bottom-full right-0 mb-3 w-48 p-3 bg-slate-800 text-white text-xs leading-relaxed rounded-xl shadow-2xl opacity-0 group-hover:opacity-100 pointer-events-none transition-all transform translate-y-2 group-hover:translate-y-0 z-50">
+                  点击AI智选，可一键智能选择贴片
+                  <div className="absolute top-full right-2.5 -mt-1 w-2 h-2 bg-slate-800 rotate-45"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="w-full bg-white border border-slate-200 rounded-xl shadow-sm p-8 flex flex-col items-center justify-center gap-6">
+            {selectedSticker ? (
+              <div className="flex flex-col items-center gap-4 w-full">
+                <div className="relative group w-48 aspect-square rounded-2xl overflow-hidden border border-slate-100 bg-slate-50">
+                  <img src={selectedSticker.url} alt={selectedSticker.name} className="w-full h-full object-contain p-4" />
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                    <button 
+                      onClick={() => setSelectedSticker(null)}
+                      className="p-2 bg-white text-red-500 rounded-full hover:scale-110 transition-transform"
+                    >
+                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+                <div className="text-center">
+                  <p className="text-sm font-bold text-slate-800">{selectedSticker.name}</p>
+                  <button 
+                    onClick={() => setIsStickerModalOpen(true)}
+                    className="mt-2 text-[#3B5BFF] text-xs font-bold hover:underline"
+                  >
+                    更换贴片
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="flex flex-col items-center gap-4">
+                <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center">
+                  <svg className="w-8 h-8 text-[#3B5BFF]/60" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 14v6m-3-3h6M6 10h2a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v2a2 2 0 002 2zm10 0h2a2 2 0 002-2V6a2 2 0 00-2-2h-2a2 2 0 00-2 2v2a2 2 0 002 2zM6 20h2a2 2 0 002-2v-2a2 2 0 00-2-2H6a2 2 0 00-2 2v2a2 2 0 002 2z" />
+                  </svg>
+                </div>
+                <button 
+                  onClick={() => setIsStickerModalOpen(true)}
+                  className="px-8 py-2.5 border border-slate-200 text-slate-600 rounded-xl font-bold text-sm hover:border-[#3B5BFF] hover:text-[#3B5BFF] hover:bg-blue-50 transition-all active:scale-95"
+                >
+                  选择贴片素材
+                </button>
+              </div>
+            )}
+          </div>
+        </section>
+
+        <section>
           <div className="mb-8">
             <h2 className="text-2xl font-bold text-slate-900 tracking-tight">音频与音乐</h2>
             <p className="text-base text-slate-500 mt-1.5">配置视频背景音乐和 AI 配音音色。</p>
@@ -170,6 +253,22 @@ const App: React.FC = () => {
       </main>
       
       <ActionBar />
+
+      <BookInfoModal 
+        isOpen={isBookModalOpen} 
+        onClose={() => setIsBookModalOpen(false)} 
+        data={bookData} 
+        onUpdate={setBookData} 
+      />
+
+      <StickerLibraryModal 
+        isOpen={isStickerModalOpen}
+        onClose={() => setIsStickerModalOpen(false)}
+        onSelect={(sticker) => {
+          setSelectedSticker(sticker);
+          setIsStickerModalOpen(false);
+        }}
+      />
     </div>
   );
 
@@ -206,13 +305,6 @@ const App: React.FC = () => {
       ) : (
         renderAiDirectorTool()
       )}
-
-      <BookInfoModal 
-        isOpen={isBookModalOpen} 
-        onClose={() => setIsBookModalOpen(false)} 
-        data={bookData} 
-        onUpdate={setBookData} 
-      />
     </div>
   );
 };
