@@ -1,5 +1,5 @@
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useLayoutEffect } from 'react';
 import { ScriptSentence } from '../types';
 
 interface ScriptEngineProps {
@@ -33,12 +33,37 @@ export const ScriptEngine: React.FC<ScriptEngineProps> = ({
   const focusRef = useRef<{ sIdx: number } | null>(null);
   const previewFocusRef = useRef<{ vIdx: number; sIdx: number } | null>(null);
 
-  // 处理主界面的焦点
+  // Auto-resize utility for textareas
+  const adjustTextareaHeight = (el: HTMLTextAreaElement | null) => {
+    if (el) {
+      el.style.height = 'auto';
+      el.style.height = `${el.scrollHeight}px`;
+    }
+  };
+
+  // Adjust height for all main textareas whenever sentences change
+  useLayoutEffect(() => {
+    sentences.forEach((_, idx) => {
+      const el = document.getElementById(`main-input-${idx}`) as HTMLTextAreaElement;
+      adjustTextareaHeight(el);
+    });
+  }, [sentences]);
+
+  // Adjust height for preview textareas
+  useLayoutEffect(() => {
+    if (isPreviewOpen && tempVersions[previewSelectedIndex]) {
+      tempVersions[previewSelectedIndex].forEach((_, sIdx) => {
+        const el = document.getElementById(`preview-input-${previewSelectedIndex}-${sIdx}`) as HTMLTextAreaElement;
+        adjustTextareaHeight(el);
+      });
+    }
+  }, [isPreviewOpen, tempVersions, previewSelectedIndex]);
+
+  // Handle main interface focus
   useEffect(() => {
     if (focusRef.current) {
       const { sIdx } = focusRef.current;
-      const id = `main-input-${sIdx}`;
-      const el = document.getElementById(id) as HTMLTextAreaElement;
+      const el = document.getElementById(`main-input-${sIdx}`) as HTMLTextAreaElement;
       if (el) {
         el.focus();
         el.setSelectionRange(0, 0);
@@ -47,12 +72,11 @@ export const ScriptEngine: React.FC<ScriptEngineProps> = ({
     }
   }, [sentences]);
 
-  // 处理预览界面的焦点
+  // Handle preview interface focus
   useEffect(() => {
     if (previewFocusRef.current) {
       const { vIdx, sIdx } = previewFocusRef.current;
-      const id = `preview-input-${vIdx}-${sIdx}`;
-      const el = document.getElementById(id) as HTMLTextAreaElement;
+      const el = document.getElementById(`preview-input-${vIdx}-${sIdx}`) as HTMLTextAreaElement;
       if (el) {
         el.focus();
         el.setSelectionRange(0, 0);
@@ -88,19 +112,19 @@ export const ScriptEngine: React.FC<ScriptEngineProps> = ({
     setTimeout(() => {
       const mockPool = [
         [
-          { id: `v1-1-${Date.now()}`, text: "在浩瀚的宇宙中，每一个选择都在创造一个新的世界。" },
-          { id: `v1-2-${Date.now()}`, text: "埃琳娜博士发现了跨越维度的秘密，但代价超乎想象。" },
-          { id: `v1-3-${Date.now()}`, text: "《量子地平线》—— 2024年度最震撼的硬核科幻力作。" }
+          { id: `v1-1-${Date.now()}`, text: "中华文明渊远流长，每一个名字背后都是一段波澜壮阔的历史。" },
+          { id: `v1-2-${Date.now()}`, text: "从三皇五帝到近代风云，《上下五千年》带你重回历史现场，感受华夏文明的脉动。" },
+          { id: `v1-3-${Date.now()}`, text: "这不仅是一本记录历史的书，更是一面照亮未来的历史之镜，让智慧在文字间传承。" }
         ],
         [
-          { id: `v2-1-${Date.now()}`, text: "你是否想过，在另一个维度，你正过着完全不同的生活？" },
-          { id: `v2-2-${Date.now()}`, text: "物理学家埃琳娜将带你穿梭量子隧道，揭开多重宇宙的面纱。" },
-          { id: `v2-3-${Date.now()}`, text: "科学与幻想的极致碰撞，现已全面发售。" }
+          { id: `v2-1-${Date.now()}`, text: "想知道我们从哪里来吗？答案就藏在这五千年的时光长河里，等待你去发掘。" },
+          { id: `v2-2-${Date.now()}`, text: "林汉达先生主编经典，用最通俗易懂且生动的语言，系统讲述中华民族兴衰交替的宏大脉络。" },
+          { id: `v2-3-${Date.now()}`, text: "历史启蒙必读经典，让孩子在故事中爱上中国史，建立文化自信。" }
         ],
         [
-          { id: `v3-1-${Date.now()}`, text: "突破现实的疆界，探索量子领域的终极奥秘。" },
-          { id: `v3-2-${Date.now()}`, text: "一部挑战你认知的科幻巨著，关于勇气、选择与未知的旅程。" },
-          { id: `v3-3-${Date.now()}`, text: "点击领取你的多重宇宙通行证。" }
+          { id: `v3-1-${Date.now()}`, text: "纵览兴衰交替，感悟华夏风骨，品味跨越千年的英雄传奇与平民生活。" },
+          { id: `v3-2-${Date.now()}`, text: "这是一次跨越时空的文明对话，全方位梳理中华历史精髓，重塑你的历史观。" },
+          { id: `v3-3-${Date.now()}`, text: "开启这段壮丽旅程，传承千年智慧，让历史在你的阅读中重新焕发生机。" }
         ]
       ];
 
@@ -207,7 +231,7 @@ export const ScriptEngine: React.FC<ScriptEngineProps> = ({
   return (
     <div className={`relative bg-white border border-slate-200 rounded-lg flex flex-col transition-all duration-300 ${isFocused ? 'min-h-[360px] border-[#3B5BFF]/50 shadow-sm' : 'min-h-[160px]'}`}>
       <div className="p-4 flex flex-col h-full">
-        {/* 顶部工具栏 */}
+        {/* Header Toolbar */}
         <div className="flex items-center justify-end mb-4 relative">
           {showRequirementHint && (
             <div className="absolute top-full right-0 mt-3 w-64 bg-amber-50 rounded-xl p-4 z-[110] animate-in slide-in-from-top-2 shadow-[0_8px_30px_rgba(0,0,0,0.12)]">
@@ -244,8 +268,8 @@ export const ScriptEngine: React.FC<ScriptEngineProps> = ({
           </div>
         </div>
 
-        {/* 主文案输入区域 */}
-        <div className="flex-1 overflow-y-auto space-y-3 pr-2">
+        {/* Main Script Input Area */}
+        <div className="flex-1 overflow-y-auto space-y-3 pr-2 scroll-smooth">
           {sentences.map((sentence, idx) => (
             <textarea
               key={sentence.id}
@@ -257,13 +281,9 @@ export const ScriptEngine: React.FC<ScriptEngineProps> = ({
               onBlur={() => setIsFocused(false)}
               onChange={(e) => handleMainTextChange(idx, e.target.value)}
               onKeyDown={(e) => handleMainKeyDown(e, idx)}
-              onInput={(e) => {
-                const target = e.target as HTMLTextAreaElement;
-                target.style.height = 'auto';
-                target.style.height = target.scrollHeight + 'px';
-              }}
+              onInput={(e) => adjustTextareaHeight(e.target as HTMLTextAreaElement)}
               className="w-full text-[13px] leading-relaxed py-0.5 px-3 border-l-2 bg-white resize-none transition-all focus:outline-none overflow-hidden border-blue-300 focus:border-[#3B5BFF] text-slate-700 cursor-text"
-              style={{ minHeight: '1.6em', height: 'auto', borderTop: 'none', borderRight: 'none', borderBottom: 'none' }}
+              style={{ borderTop: 'none', borderRight: 'none', borderBottom: 'none' }}
             />
           ))}
           {sentences.length === 0 && (
@@ -327,13 +347,9 @@ export const ScriptEngine: React.FC<ScriptEngineProps> = ({
                             value={sentence.text}
                             onChange={(e) => handleTempTextChange(vIdx, sIdx, e.target.value)}
                             onKeyDown={(e) => handlePreviewKeyDown(e, vIdx, sIdx)}
+                            onInput={(e) => adjustTextareaHeight(e.target as HTMLTextAreaElement)}
                             className={`w-full text-[13px] leading-relaxed py-0.5 px-3 border-l-2 bg-transparent resize-none transition-all focus:outline-none overflow-hidden ${previewSelectedIndex === vIdx ? 'border-blue-300 focus:border-[#3B5BFF] focus:bg-slate-50 text-slate-700 cursor-text' : 'border-slate-200 text-slate-400 pointer-events-none'}`}
-                            style={{ borderTop: 'none', borderRight: 'none', borderBottom: 'none', minHeight: '1.6em', height: 'auto' }}
-                            onInput={(e) => {
-                              const target = e.target as HTMLTextAreaElement;
-                              target.style.height = 'auto';
-                              target.style.height = target.scrollHeight + 'px';
-                            }}
+                            style={{ borderTop: 'none', borderRight: 'none', borderBottom: 'none' }}
                           />
                         ))}
                       </div>

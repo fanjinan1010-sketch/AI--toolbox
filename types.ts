@@ -14,13 +14,17 @@ export interface BookData {
   files: FileInfo[];
 }
 
+export interface MediaAsset {
+  id: string;
+  thumbnail: string;
+  timestamp: string;
+}
+
 export interface ScriptSentence {
   id: string;
   text: string;
-  media?: {
-    thumbnail: string;
-    timestamp: string;
-  };
+  duration?: string;
+  media?: MediaAsset[]; // Support multiple assets per sentence as per the new requirement
 }
 
 export enum VisualMode {
@@ -32,5 +36,6 @@ export enum VisualMode {
 export enum AppView {
   LANDING = 'LANDING',
   SMART_VIDEO = 'SMART_VIDEO',
-  AI_DIRECTOR = 'AI_DIRECTOR'
+  AI_DIRECTOR = 'AI_DIRECTOR',
+  AI_TOOLBOX = 'AI_TOOLBOX'
 }

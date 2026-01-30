@@ -139,17 +139,21 @@ export const Header: React.FC<HeaderProps> = ({ currentView, onNavigate }) => {
   const handleToolClick = (tool: ToolItem) => {
     if (tool.view) {
       onNavigate(tool.view);
+    } else {
+      if (tool.name.includes('视频') || tool.name.includes('成片')) {
+        onNavigate(AppView.LANDING);
+      }
     }
     setIsMenuOpen(false);
   };
 
   return (
-    <header className="h-[56px] bg-[#F8FAFC] flex items-center px-6 shrink-0 z-50 border-b border-slate-200">
+    <header className="h-[56px] bg-[#F6F8FA] flex items-center px-6 shrink-0 z-50 border-b border-slate-200">
       {/* 左侧：Logo & AI工具箱触发器 */}
       <div className="flex items-center shrink-0 relative h-full">
-        <div className="flex items-center cursor-pointer" onClick={() => onNavigate(AppView.LANDING)}>
+        <div className="flex items-center cursor-pointer group" onClick={() => onNavigate(AppView.AI_TOOLBOX)}>
           <div className="flex items-center gap-2">
-            <span className="text-xl font-bold tracking-tight bg-gradient-to-r from-[#3B5BFF] to-[#60A5FA] bg-clip-text text-transparent">书脉</span>
+            <span className="text-xl font-bold tracking-tight bg-gradient-to-r from-[#3B5BFF] to-[#60A5FA] bg-clip-text text-transparent transition-opacity group-hover:opacity-80">书脉</span>
             <div className="w-[1px] h-4 bg-slate-300 mx-1"></div>
           </div>
         </div>
@@ -173,7 +177,6 @@ export const Header: React.FC<HeaderProps> = ({ currentView, onNavigate }) => {
           {/* Mega Menu 下拉面板 */}
           {isMenuOpen && (
             <div className="absolute top-[55px] left-0 w-[800px] bg-white rounded-b-3xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] border-x border-b border-slate-100 flex overflow-hidden animate-in slide-in-from-top-2 duration-300 z-[100]">
-              {/* 左侧导航栏 */}
               <div className="w-[280px] bg-[#F8FAFF] flex flex-col pt-4 pb-8 border-r border-slate-100">
                 {(Object.keys(MENU_DATA) as CategoryType[]).map((key) => (
                   <div
@@ -188,16 +191,12 @@ export const Header: React.FC<HeaderProps> = ({ currentView, onNavigate }) => {
                     <span className="text-[11px] text-slate-400 font-normal">{MENU_DATA[key].sub}</span>
                   </div>
                 ))}
-
-                {/* 动态插画区域 */}
                 <div className="mt-auto px-6 pb-4">
                   <div className="w-full aspect-square bg-[#3B5BFF]/5 rounded-3xl overflow-hidden border border-[#3B5BFF]/10 relative">
                     {MENU_DATA[activeCategory].illustration}
                   </div>
                 </div>
               </div>
-
-              {/* 右侧工具矩阵 */}
               <div className="flex-1 bg-white p-10">
                 <div className="grid grid-cols-2 gap-x-12 gap-y-6">
                   {MENU_DATA[activeCategory].tools.map((tool, idx) => (
@@ -218,20 +217,20 @@ export const Header: React.FC<HeaderProps> = ({ currentView, onNavigate }) => {
         </div>
       </div>
 
-      {/* 动态面包屑 */}
-      <div className="ml-[10px] flex items-center">
-        <nav className="flex items-center text-sm gap-2">
+      {/* 面包屑：路径始终以“AI制作图书营销视频”开始 */}
+      <div className="ml-4 flex items-center">
+        <nav className="flex items-center text-[14px] gap-2">
           <button 
             onClick={() => onNavigate(AppView.LANDING)}
-            className={`transition-colors hover:text-[#3B5BFF] ${currentView === AppView.LANDING ? 'text-slate-900 font-normal' : 'text-slate-400 font-normal'}`}
+            className={`transition-colors hover:text-[#3B5BFF] ${currentView === AppView.LANDING ? 'text-slate-900 font-medium' : 'text-slate-400 font-normal'}`}
           >
             AI制作图书营销视频
           </button>
 
-          {currentView !== AppView.LANDING && (
+          {currentView !== AppView.LANDING && currentView !== AppView.AI_TOOLBOX && (
             <div className="flex items-center gap-2">
               <span className="text-slate-300">/</span>
-              <span className="text-slate-900 font-normal">
+              <span className="text-slate-900 font-medium">
                 {currentView === AppView.SMART_VIDEO ? 'AI智能成片' : 'AI视频编导'}
               </span>
             </div>

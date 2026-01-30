@@ -21,8 +21,10 @@ export const VisualSourceSelector: React.FC<Props> = ({ onSelect }) => {
           </svg>
         </div>
         
-        <h3 className="text-xl font-bold text-slate-800 mb-2">上传本地素材</h3>
-        <p className="text-base text-slate-500 mb-8">AI智能成片：自动将你的素材与文案音频进行匹配和剪辑</p>
+        <div className="relative">
+          <h3 className="text-xl font-bold text-slate-800 mb-2">上传本地素材</h3>
+          <p className="text-base text-slate-500 mb-8">AI智能成片：自动将你的素材与文案音频进行匹配和剪辑</p>
+        </div>
         
         <div className="w-full max-w-xl p-10 border-2 border-dashed border-slate-100 rounded-xl bg-slate-50/50 group-hover:border-[#3B5BFF]/30 group-hover:bg-[#3B5BFF]/5 transition-all mb-4 flex flex-col items-center gap-6">
           <div className="flex flex-col items-center gap-3">
