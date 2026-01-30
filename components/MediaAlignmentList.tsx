@@ -9,12 +9,12 @@ interface Props {
 
 export const MediaAlignmentList: React.FC<Props> = ({ sentences, onBack }) => {
   return (
-    <div className="bg-white border border-slate-200 rounded-3xl shadow-sm overflow-hidden">
+    <div className="bg-white border border-slate-200 rounded-lg shadow-sm overflow-hidden">
       <div className="p-5 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
         <div className="flex items-center gap-4">
           <button 
             onClick={onBack}
-            className="p-2 hover:bg-slate-200 rounded-xl transition-colors text-slate-500"
+            className="p-2 hover:bg-slate-200 rounded-lg transition-colors text-slate-500"
           >
              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -23,7 +23,7 @@ export const MediaAlignmentList: React.FC<Props> = ({ sentences, onBack }) => {
           <h3 className="text-base font-bold text-slate-800">素材编排与对齐</h3>
         </div>
         <div className="flex items-center gap-2">
-           <span className="text-xs text-slate-500 font-bold bg-slate-200/50 px-2 py-1 rounded-full">
+           <span className="text-xs text-slate-500 font-bold bg-slate-200/50 px-2 py-1 rounded-lg">
             进度 {sentences.filter(s => s.media).length} / {sentences.length}
           </span>
         </div>
@@ -35,7 +35,7 @@ export const MediaAlignmentList: React.FC<Props> = ({ sentences, onBack }) => {
             {/* 左侧: 脚本内容 */}
             <div className="flex-1 pr-12">
               <div className="flex items-center gap-3 mb-3">
-                <span className="text-[10px] font-bold text-[#3B5BFF] bg-blue-50 px-2 py-0.5 rounded-full uppercase tracking-wider">分镜</span>
+                <span className="text-[10px] font-bold text-[#3B5BFF] bg-blue-50 px-2 py-0.5 rounded-lg uppercase tracking-wider">分镜</span>
                 <span className="text-[10px] text-slate-400 font-bold">建议 4.0s</span>
               </div>
               <p className="text-base text-slate-700 leading-relaxed font-medium">
@@ -46,7 +46,7 @@ export const MediaAlignmentList: React.FC<Props> = ({ sentences, onBack }) => {
             {/* 右侧: 素材上传区 */}
             <div className="w-56 shrink-0">
               {sentence.media ? (
-                <div className="relative aspect-video rounded-2xl overflow-hidden border border-slate-200 group-hover:shadow-2xl group-hover:border-[#3B5BFF]/20 transition-all">
+                <div className="relative aspect-video rounded-lg overflow-hidden border border-slate-200 group-hover:shadow-2xl group-hover:border-[#3B5BFF]/20 transition-all">
                   <img 
                     src={sentence.media.thumbnail} 
                     alt="预览" 
@@ -57,7 +57,7 @@ export const MediaAlignmentList: React.FC<Props> = ({ sentences, onBack }) => {
                   </div>
                   
                   <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                    <div className="flex items-center gap-2 bg-white p-2 rounded-xl shadow-2xl scale-90 group-hover:scale-100 transition-transform">
+                    <div className="flex items-center gap-2 bg-white p-2 rounded-lg shadow-2xl scale-90 group-hover:scale-100 transition-transform">
                       <button className="p-2 hover:bg-slate-100 rounded-lg text-slate-600 transition-colors">
                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
@@ -72,7 +72,7 @@ export const MediaAlignmentList: React.FC<Props> = ({ sentences, onBack }) => {
                   </div>
                 </div>
               ) : (
-                <button className="w-full aspect-video border-2 border-dashed border-slate-200 rounded-2xl flex flex-col items-center justify-center gap-2 text-slate-400 hover:border-[#3B5BFF] hover:text-[#3B5BFF] hover:bg-blue-50/50 transition-all bg-slate-50/50 group-hover:border-[#3B5BFF]/40">
+                <button className="w-full aspect-video border-2 border-dashed border-slate-200 rounded-lg flex flex-col items-center justify-center gap-2 text-slate-400 hover:border-[#3B5BFF] hover:text-[#3B5BFF] hover:bg-blue-50/50 transition-all bg-slate-50/50 group-hover:border-[#3B5BFF]/40">
                   <svg className="w-8 h-8 opacity-40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                   </svg>

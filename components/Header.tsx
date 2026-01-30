@@ -144,7 +144,7 @@ export const Header: React.FC<HeaderProps> = ({ currentView, onNavigate }) => {
   };
 
   return (
-    <header className="h-[56px] bg-white border-b border-slate-200 flex items-center px-6 shrink-0 z-50">
+    <header className="h-[56px] bg-[#F8FAFC] flex items-center px-6 shrink-0 z-50 border-b border-slate-200">
       {/* 左侧：Logo & AI工具箱触发器 */}
       <div className="flex items-center shrink-0 relative h-full">
         <div className="flex items-center cursor-pointer" onClick={() => onNavigate(AppView.LANDING)}>

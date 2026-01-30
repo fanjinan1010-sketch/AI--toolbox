@@ -7,9 +7,16 @@ interface BookInfoModalProps {
   onClose: () => void;
   data: BookData;
   onUpdate: (data: BookData) => void;
+  onDemoFill: () => void; // 新增：演示填入方法
 }
 
-export const BookInfoModal: React.FC<BookInfoModalProps> = ({ isOpen, onClose, data, onUpdate }) => {
+export const BookInfoModal: React.FC<BookInfoModalProps> = ({ 
+  isOpen, 
+  onClose, 
+  data, 
+  onUpdate,
+  onDemoFill 
+}) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [showTooltip, setShowTooltip] = useState(false);
   const [focusedField, setFocusedField] = useState<string | null>(null);
@@ -36,7 +43,8 @@ export const BookInfoModal: React.FC<BookInfoModalProps> = ({ isOpen, onClose, d
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      const newFiles: FileInfo[] = Array.from(e.target.files).map(file => {
+      const filesArray = Array.from(e.target.files) as File[];
+      const newFiles: FileInfo[] = filesArray.map(file => {
         const ext = file.name.split('.').pop()?.toLowerCase() as FileInfo['type'];
         return { name: file.name, type: ext };
       });
@@ -81,16 +89,24 @@ export const BookInfoModal: React.FC<BookInfoModalProps> = ({ isOpen, onClose, d
       />
       
       {/* 弹窗主体 */}
-      <div className="relative w-full max-w-2xl bg-white rounded-2xl shadow-2xl flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-200">
+      <div className="relative w-full max-w-2xl bg-white rounded-lg shadow-2xl flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-200">
         {/* 头部 */}
         <div className="p-6 border-b border-slate-100 flex items-center justify-between shrink-0">
           <div>
-            <h3 className="text-xl font-bold text-[#181E29]">填写图书信息</h3>
+            <div className="flex items-center gap-3">
+              <h3 className="text-xl font-bold text-[#181E29]">填写图书信息</h3>
+              <button 
+                onClick={onDemoFill}
+                className="text-slate-400 hover:text-[#3B5BFF] text-[11px] font-medium transition-colors hover:underline mt-1"
+              >
+                演示填入
+              </button>
+            </div>
             <p className="text-xs text-slate-500 mt-1">完善书籍背景，帮助 AI 为您打造更具吸引力的视频内容。</p>
           </div>
           <button 
             onClick={onClose}
-            className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full transition-all"
+            className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-all"
           >
             <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -110,7 +126,7 @@ export const BookInfoModal: React.FC<BookInfoModalProps> = ({ isOpen, onClose, d
                 onFocus={() => setFocusedField('title')}
                 onBlur={() => setFocusedField(null)}
                 onChange={(e) => handleChange('title', e.target.value)}
-                className={`w-full px-4 py-2 bg-slate-50 border ${isInvalid('title') ? 'border-red-200' : 'border-slate-200'} rounded-lg text-[14px] text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#3B5BFF]/20 focus:border-[#3B5BFF] transition-all duration-300 ${focusedField === 'title' ? 'h-14 shadow-sm' : 'h-10'}`}
+                className={`w-full px-4 py-2 bg-white border ${isInvalid('title') ? 'border-red-200' : 'border-slate-200'} rounded-lg text-[14px] text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#3B5BFF]/20 focus:border-[#3B5BFF] transition-all duration-300 ${focusedField === 'title' ? 'h-14 shadow-sm' : 'h-10'}`}
               />
             </div>
             <div className="space-y-1">
@@ -122,7 +138,7 @@ export const BookInfoModal: React.FC<BookInfoModalProps> = ({ isOpen, onClose, d
                 onFocus={() => setFocusedField('author')}
                 onBlur={() => setFocusedField(null)}
                 onChange={(e) => handleChange('author', e.target.value)}
-                className={`w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-[14px] text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#3B5BFF]/20 focus:border-[#3B5BFF] transition-all duration-300 ${focusedField === 'author' ? 'h-14 shadow-sm' : 'h-10'}`}
+                className={`w-full px-4 py-2 bg-white border border-slate-200 rounded-lg text-[14px] text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#3B5BFF]/20 focus:border-[#3B5BFF] transition-all duration-300 ${focusedField === 'author' ? 'h-14 shadow-sm' : 'h-10'}`}
               />
             </div>
           </div>
@@ -133,7 +149,7 @@ export const BookInfoModal: React.FC<BookInfoModalProps> = ({ isOpen, onClose, d
               <label className="text-sm font-bold text-slate-700">内容简介 <span className="text-red-500">*</span></label>
               <span className="text-[10px] text-slate-400 font-normal">支持上传图书样张或证订单附件（最多10个文件）</span>
             </div>
-            <div className={`relative bg-slate-50 border ${isInvalid('summary') ? 'border-red-200' : 'border-slate-200'} rounded-xl overflow-hidden flex flex-col transition-all duration-300 focus-within:ring-2 focus-within:ring-[#3B5BFF]/20 focus-within:border-[#3B5BFF] ${focusedField === 'summary' ? 'shadow-md' : ''}`}>
+            <div className={`relative bg-white border ${isInvalid('summary') ? 'border-red-200' : 'border-slate-200'} rounded-lg overflow-hidden flex flex-col transition-all duration-300 focus-within:ring-2 focus-within:ring-[#3B5BFF]/20 focus-within:border-[#3B5BFF] ${focusedField === 'summary' ? 'shadow-md' : ''}`}>
               <textarea 
                 placeholder="手动输入描述或上传图书文件..."
                 value={data.summary}
@@ -169,7 +185,7 @@ export const BookInfoModal: React.FC<BookInfoModalProps> = ({ isOpen, onClose, d
                       <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" /></svg>
                     </button>
                     {showTooltip && (
-                      <div className="absolute bottom-full right-0 mb-2 w-64 p-3 bg-slate-800 text-white text-[11px] leading-relaxed rounded-xl shadow-xl z-50">
+                      <div className="absolute bottom-full right-0 mb-2 w-64 p-3 bg-slate-800 text-white text-[11px] leading-relaxed rounded-lg shadow-xl z-50">
                         支持 pdf, doc, xlsx, jpg 等格式，总大小不超过 50MB。
                         <div className="absolute top-full right-2 w-2 h-2 bg-slate-800 rotate-45 -mt-1"></div>
                       </div>
@@ -193,7 +209,7 @@ export const BookInfoModal: React.FC<BookInfoModalProps> = ({ isOpen, onClose, d
               onFocus={() => setFocusedField('sellingPoints')}
               onBlur={() => setFocusedField(null)}
               onChange={(e) => handleChange('sellingPoints', e.target.value)}
-              className={`w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-[14px] text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#3B5BFF]/20 focus:border-[#3B5BFF] transition-all duration-300 resize-none ${focusedField === 'sellingPoints' ? 'h-48 shadow-sm' : 'h-24'}`}
+              className={`w-full px-4 py-3 bg-white border border-slate-200 rounded-lg text-[14px] text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#3B5BFF]/20 focus:border-[#3B5BFF] transition-all duration-300 resize-none ${focusedField === 'sellingPoints' ? 'h-48 shadow-sm' : 'h-24'}`}
             />
           </div>
 
@@ -210,7 +226,7 @@ export const BookInfoModal: React.FC<BookInfoModalProps> = ({ isOpen, onClose, d
               onFocus={() => setFocusedField('targetAudience')}
               onBlur={() => setFocusedField(null)}
               onChange={(e) => handleChange('targetAudience', e.target.value)}
-              className={`w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-[14px] text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#3B5BFF]/20 focus:border-[#3B5BFF] transition-all duration-300 resize-none ${focusedField === 'targetAudience' ? 'h-48 shadow-sm' : 'h-24'}`}
+              className={`w-full px-4 py-3 bg-white border border-slate-200 rounded-lg text-[14px] text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#3B5BFF]/20 focus:border-[#3B5BFF] transition-all duration-300 resize-none ${focusedField === 'targetAudience' ? 'h-48 shadow-sm' : 'h-24'}`}
             />
           </div>
         </div>
@@ -225,7 +241,7 @@ export const BookInfoModal: React.FC<BookInfoModalProps> = ({ isOpen, onClose, d
           </button>
           <button 
             onClick={onClose}
-            className="px-8 py-2.5 bg-[#3B5BFF] text-white rounded-xl font-bold hover:bg-[#3B5BFF]/90 transition-all shadow-lg shadow-[#3B5BFF]/20 active:scale-95"
+            className="px-8 py-2.5 bg-[#3B5BFF] text-white rounded-lg font-bold hover:bg-[#3B5BFF]/90 transition-all shadow-lg shadow-[#3B5BFF]/20 active:scale-95"
           >
             保存并返回
           </button>
