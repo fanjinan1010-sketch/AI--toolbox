@@ -10,6 +10,7 @@ import { BookInfoModal } from './components/BookInfoModal';
 import { LandingPage } from './components/LandingPage';
 import { StickerLibraryModal } from './components/StickerLibraryModal';
 import { AiToolbox } from './components/AiToolbox';
+import { CreationHistoryDrawer } from './components/CreationHistoryDrawer';
 import { VisualMode, ScriptSentence, BookData, AppView, MediaAsset } from './types';
 
 const DEMO_BOOK_DATA: BookData = {
@@ -55,6 +56,7 @@ const App: React.FC = () => {
   const [visualMode, setVisualMode] = useState<VisualMode>(VisualMode.SELECTION);
   const [isBookModalOpen, setIsBookModalOpen] = useState(false);
   const [isStickerModalOpen, setIsStickerModalOpen] = useState(false);
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [selectedSticker, setSelectedSticker] = useState<{id: string, name: string, url: string} | null>(null);
   
   const [uploadedAssets, setUploadedAssets] = useState<MediaAsset[]>([]);
@@ -75,12 +77,9 @@ const App: React.FC = () => {
   };
 
   const handleAiSmartSelect = () => {
-    const aiSticker = { 
-      id: 'AI-1', 
-      name: 'AI 智选推荐', 
-      url: 'https://api.dicebear.com/7.x/shapes/svg?seed=ai-smart' 
-    };
-    setSelectedSticker(aiSticker);
+    const randomIndex = Math.floor(Math.random() * QUICK_STICKERS.length);
+    const recommended = QUICK_STICKERS[randomIndex];
+    setSelectedSticker(recommended);
   };
 
   const handleDemoImport = () => {
@@ -179,19 +178,29 @@ const App: React.FC = () => {
   );
 
   const renderConfiguration = () => (
-    <main className="w-[75%] bg-[#F5F7F9] overflow-y-auto pb-32 pt-10 px-12 space-y-16 animate-in fade-in duration-500">
+    <main className="w-[75%] bg-[#F5F7F9] overflow-y-auto pb-32 pt-10 px-12 space-y-16 animate-in fade-in duration-500 relative">
       <section>
-        <div className="mb-8">
-          <div className="flex items-center gap-3">
-            <h2 className="text-2xl font-bold text-slate-900 tracking-tight">视觉素材选择</h2>
-            <button 
-              onClick={handleDemoImport}
-              className="text-slate-400 hover:text-[#3B5BFF] text-[11px] font-medium transition-colors hover:underline mt-1"
-            >
-              演示导入
-            </button>
+        <div className="mb-8 flex items-start justify-between">
+          <div className="space-y-1.5">
+            <div className="flex items-center gap-3">
+              <h2 className="text-2xl font-bold text-slate-900 tracking-tight">视觉素材选择</h2>
+              <button 
+                onClick={handleDemoImport}
+                className="text-slate-400 hover:text-[#3B5BFF] text-[11px] font-medium transition-colors hover:underline mt-1"
+              >
+                演示导入
+              </button>
+            </div>
+            <p className="text-base text-slate-500">为您的视频文案匹配高质量视觉画面。</p>
           </div>
-          <p className="text-base text-slate-500 mt-1.5">为您的视频文案匹配高质量视觉画面。</p>
+          
+          <button 
+            onClick={() => setIsHistoryOpen(true)}
+            className="flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-[13px] font-bold text-slate-600 hover:text-[#3B5BFF] hover:border-[#3B5BFF] transition-all active:scale-95 shadow-sm mt-1"
+          >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            创作记录
+          </button>
         </div>
         <div className="w-full">
           {visualMode === VisualMode.SELECTION ? (
@@ -281,11 +290,15 @@ const App: React.FC = () => {
           <AudioMusicSection />
         </div>
       </section>
+
+      <section className="pt-8">
+        <ActionBar />
+      </section>
     </main>
   );
 
   const renderEditorLayout = () => (
-    <div className="flex-1 flex overflow-hidden">
+    <div className="flex-1 flex overflow-hidden relative">
       <aside className="w-[25%] min-w-[360px] bg-white border-r border-slate-200 overflow-y-auto flex flex-col p-8 pb-24 space-y-12 z-10 animate-in fade-in duration-500">
         <section>
           <div className="mb-6 flex items-start justify-between">
@@ -346,7 +359,7 @@ const App: React.FC = () => {
         </section>
 
         <section className="flex flex-col min-h-0">
-          <div className="mb-6">
+          <div className="mb-2">
             <h2 className="text-xl font-bold text-slate-900 tracking-tight">视频文案</h2>
             <p className="text-sm text-slate-400 mt-1">输入或由 AI 生成您的视频旁白文案。</p>
           </div>
@@ -358,10 +371,9 @@ const App: React.FC = () => {
 
       {hasBookInfo ? renderConfiguration() : renderGuide()}
       
-      {hasBookInfo && <ActionBar />}
-
       <BookInfoModal isOpen={isBookModalOpen} onClose={() => setIsBookModalOpen(false)} data={bookData} onUpdate={setBookData} onDemoFill={handleQuickFill} />
       <StickerLibraryModal isOpen={isStickerModalOpen} onClose={() => setIsStickerModalOpen(false)} onSelect={(sticker) => { setSelectedSticker(sticker); setIsStickerModalOpen(false); }} />
+      <CreationHistoryDrawer isOpen={isHistoryOpen} onClose={() => setIsHistoryOpen(false)} />
     </div>
   );
 

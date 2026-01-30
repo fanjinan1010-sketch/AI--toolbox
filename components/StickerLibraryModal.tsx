@@ -9,14 +9,14 @@ interface Sticker {
 }
 
 const STICKERS: Sticker[] = [
-  { id: '1', name: '示例贴片名', ratio: '3:4', color: 'bg-blue-100' },
-  { id: '2', name: '示例贴片名', ratio: '9:16', color: 'bg-indigo-100' },
-  { id: '3', name: '示例贴片名', ratio: '3:4', color: 'bg-purple-100' },
-  { id: '4', name: '示例贴片名', ratio: '9:16', color: 'bg-pink-100' },
-  { id: '5', name: '示例贴片名', ratio: '3:4', color: 'bg-orange-100' },
-  { id: '6', name: '示例贴片名', ratio: '9:16', color: 'bg-emerald-100' },
-  { id: '7', name: '示例贴片名', ratio: '3:4', color: 'bg-rose-100' },
-  { id: '8', name: '示例贴片名', ratio: '9:16', color: 'bg-amber-100' },
+  { id: '1', name: '历史风云', ratio: '3:4', color: 'bg-blue-100' },
+  { id: '2', name: '经典典藏', ratio: '9:16', color: 'bg-indigo-100' },
+  { id: '3', name: '国风韵味', ratio: '3:4', color: 'bg-purple-100' },
+  { id: '4', name: '深度解读', ratio: '9:16', color: 'bg-pink-100' },
+  { id: '5', name: '推荐必读', ratio: '3:4', color: 'bg-orange-100' },
+  { id: '6', name: '文化传承', ratio: '9:16', color: 'bg-emerald-100' },
+  { id: '7', name: '知识宝库', ratio: '3:4', color: 'bg-rose-100' },
+  { id: '8', name: '时光穿梭', ratio: '9:16', color: 'bg-amber-100' },
 ];
 
 interface StickerLibraryModalProps {
@@ -29,6 +29,7 @@ export const StickerLibraryModal: React.FC<StickerLibraryModalProps> = ({ isOpen
   const [search, setSearch] = useState('');
   const [filterRatio, setFilterRatio] = useState<'All' | '3:4' | '9:16'>('All');
   const [tempSelection, setTempSelection] = useState<Sticker | null>(null);
+  const [hoveredSticker, setHoveredSticker] = useState<Sticker | null>(null);
 
   const filteredStickers = useMemo(() => {
     return STICKERS.filter(s => {
@@ -87,13 +88,15 @@ export const StickerLibraryModal: React.FC<StickerLibraryModalProps> = ({ isOpen
         </div>
 
         {/* Content Area - Waterfall Layout */}
-        <div className="flex-1 overflow-y-auto p-8 bg-white">
+        <div className="flex-1 overflow-y-auto p-8 bg-white relative">
           {filteredStickers.length > 0 ? (
             <div className="columns-2 sm:columns-3 gap-6 space-y-6">
               {filteredStickers.map((sticker) => (
                 <div 
                   key={sticker.id}
                   onClick={() => setTempSelection(sticker)}
+                  onMouseEnter={() => setHoveredSticker(sticker)}
+                  onMouseLeave={() => setHoveredSticker(null)}
                   className="break-inside-avoid mb-6 group relative flex flex-col cursor-pointer transition-all duration-300"
                 >
                   <div 
@@ -103,7 +106,7 @@ export const StickerLibraryModal: React.FC<StickerLibraryModalProps> = ({ isOpen
                   >
                     {/* Content Container */}
                     <div className="absolute inset-0 flex flex-col">
-                      {/* Stylized Pattern Area - Matches outer frame ratio */}
+                      {/* Stylized Pattern Area */}
                       <div className="flex-1 p-3 pb-0">
                         <div className={`w-full h-full rounded-lg flex items-center justify-center transition-all duration-300 ${tempSelection?.id === sticker.id ? 'bg-[#3B5BFF]/10' : sticker.color}`}>
                            <svg className={`w-1/3 h-1/3 transition-colors ${tempSelection?.id === sticker.id ? 'text-[#3B5BFF]' : 'text-slate-400 opacity-60'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -149,6 +152,28 @@ export const StickerLibraryModal: React.FC<StickerLibraryModalProps> = ({ isOpen
               <p>没有找到相关贴片素材</p>
             </div>
           )}
+
+          {/* 浮动预览面板 */}
+          {hoveredSticker && (
+            <div className="fixed z-[200] pointer-events-none transition-all duration-300 animate-in fade-in zoom-in-90"
+                 style={{ 
+                   left: '50%', 
+                   top: '50%', 
+                   transform: 'translate(-50%, -50%)',
+                 }}>
+              <div className={`bg-white border-2 border-[#3B5BFF]/20 rounded-2xl shadow-2xl overflow-hidden p-4 flex flex-col items-center gap-4 ${hoveredSticker.ratio === '3:4' ? 'w-64 aspect-[3/4]' : 'w-48 aspect-[9/16]'}`}>
+                <div className={`w-full h-full rounded-xl flex items-center justify-center ${hoveredSticker.color}`}>
+                   <svg className="w-24 h-24 text-[#3B5BFF]/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                   </svg>
+                </div>
+                <div className="text-center pb-2">
+                  <p className="text-sm font-bold text-slate-800">{hoveredSticker.name}</p>
+                  <p className="text-[10px] text-slate-400 mt-1 uppercase font-bold tracking-widest">{hoveredSticker.ratio} 比例</p>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Footer */}
@@ -164,7 +189,7 @@ export const StickerLibraryModal: React.FC<StickerLibraryModalProps> = ({ isOpen
             onClick={() => tempSelection && onSelect({
               id: tempSelection.id,
               name: tempSelection.name,
-              url: 'https://api.dicebear.com/7.x/shapes/svg?seed=' + tempSelection.id // Keep a dummy URL for the external app logic
+              url: 'https://api.dicebear.com/7.x/shapes/svg?seed=' + tempSelection.id 
             })}
             className={`px-10 py-2.5 rounded-lg font-bold transition-all shadow-lg active:scale-95 ${tempSelection ? 'bg-[#3B5BFF] text-white shadow-[#3B5BFF]/20 hover:bg-[#3B5BFF]/90' : 'bg-slate-200 text-slate-400 cursor-not-allowed shadow-none'}`}
           >
